@@ -14,7 +14,9 @@ import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
 import java.io.IOException;
 import java.nio.MappedByteBuffer;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class Classifier {
 
@@ -93,10 +95,21 @@ public abstract class Classifier {
         return imageProcessor.process(inputImageBuffer);
     }
 
-    public float[] recognizeImage(final Bitmap bitmap) {
-        inputImageBuffer = loadImage(bitmap);
+    /*public float[] recognizeImage(final Bitmap bitmap) {
+        inputImageBuffer = loadImage(bitmap);Rz
         tflite.run(inputImageBuffer.getBuffer(), outputProbabilityBuffer.getBuffer());
         float[] res = outputProbabilityBuffer.getFloatArray();
         return res;
+    }*/
+
+    public Map<Integer,float[]> recognizeImage(Map<Integer,Bitmap> imageList) {
+        Map<Integer,float[]> resultList = new HashMap<>();
+        for (Map.Entry<Integer,Bitmap> image:imageList.entrySet()) {
+            inputImageBuffer = loadImage(image.getValue());
+            tflite.run(inputImageBuffer.getBuffer(), outputProbabilityBuffer.getBuffer());
+            float[] res = outputProbabilityBuffer.getFloatArray();
+            resultList.put(image.getKey(),res);
+        }
+        return resultList;
     }
 }
