@@ -8,16 +8,12 @@ import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.TextView;
-
 import androidx.annotation.RequiresApi;
-
 import com.example.project.classifier.Classifier;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -30,12 +26,14 @@ public class AsyncProcessImage extends AsyncTask<Void,Void,Void> {
     private ProgressDialog dialog;
     private Activity activity;
     private Map<Integer,Bitmap> images;
+    private static List<List<String>> tsvFileData;
 
     public AsyncProcessImage(Activity activity,Map<Integer,Bitmap> images){
         dialog =new ProgressDialog(activity);
         this.activity = activity;
         this.images = images;
         finalRes = new HashMap<>();
+        tsvFileData = new ArrayList<>();
     }
 
     @Override
@@ -51,12 +49,14 @@ public class AsyncProcessImage extends AsyncTask<Void,Void,Void> {
         try {
             Classifier classifier = Classifier.create(activity);
             Map<Integer, float[]> output = classifier.recognizeImage(images);
-
-            System.out.println("Map:" + output);
             for (Map.Entry<Integer, float[]> list : output.entrySet()) {
-                float[] arr = list.getValue();
-                System.out.println("arr:" + Arrays.toString(arr));
-                int predictLabel = calculateResult(list.getValue());
+                int predictLabel=0;
+                if (tsvFileData.isEmpty()){
+                    readTSVFiles();
+                    predictLabel = calculateResult(list.getValue());
+                }else{
+                    predictLabel = calculateResult(list.getValue());
+                }
                 if (predictLabel == 0) {
                     finalRes.put(list.getKey(), "Rock");
                 } else if (predictLabel == 1) {
@@ -71,11 +71,9 @@ public class AsyncProcessImage extends AsyncTask<Void,Void,Void> {
         return null;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private int calculateResult(float[] output) throws Exception{
+    private void readTSVFiles () throws Exception{
         InputStream vectorFile = activity.getAssets().open("rps_vecs.tsv");
         InputStream labelFile = activity.getAssets().open("rps_labels.tsv");
-        List<StoreValue> list = new ArrayList<>();
 
         try {
             StringTokenizer st1;
@@ -84,9 +82,8 @@ public class AsyncProcessImage extends AsyncTask<Void,Void,Void> {
             BufferedReader labelTSVFile = new BufferedReader(new InputStreamReader(labelFile, "UTF-8"));
             String vectorDataRow = vectorTSVFile.readLine();
             String labelDataRow = labelTSVFile.readLine();
-            float dis;
+
             while (vectorDataRow != null) {
-                dis=0;
                 st1 = new StringTokenizer(vectorDataRow, "\t");
                 st2 = new StringTokenizer(labelDataRow);
                 List<String> dataArray = new ArrayList<>();
@@ -97,32 +94,41 @@ public class AsyncProcessImage extends AsyncTask<Void,Void,Void> {
                 while (st1.hasMoreElements()) {
                     dataArray.add(st1.nextElement().toString());
                 }
-                for (int i=0;i<dataArray.size();i++) {
-                    float num1 = output[i];
-                    float num2 = Float.parseFloat(dataArray.get(i));
-                    // calculating distance
-                    dis = dis+(float) Math.pow((num2-num1),2);
-                }
-                // storing distance in list
-                StoreValue storeValue = new StoreValue((float) Math.sqrt(dis),Integer.parseInt(label));
-                list.add(storeValue);
+                dataArray.add(dataArray.size(),label);
+                tsvFileData.add(dataArray);
                 vectorDataRow = vectorTSVFile.readLine();
                 labelDataRow = labelTSVFile.readLine();
             }
-
-            // sorting list on basic of distance
-            list.sort(new Comparator<StoreValue>() {
-                @Override
-                public int compare(StoreValue o1, StoreValue o2) {
-                    return Float.compare(o1.getDistance(),o2.getDistance());
-                }
-            });
-
-            // returning the minimum distance
-            return list.get(0).getLabel();
         }finally {
             vectorFile.close();
         }
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private int calculateResult(float[] output) throws Exception{
+        List<StoreValue> label = new ArrayList<>();
+        for (List<String> dataArray:tsvFileData) {
+            float dis=0;
+            for (int i=0;i<dataArray.size()-1;i++) {
+                float num1 = output[i];
+                float num2 = Float.parseFloat(dataArray.get(i));
+                dis = dis + (float) Math.pow((num2 - num1), 2);
+            }
+            StoreValue storeValue = new StoreValue((float) Math.sqrt(dis),
+                    Integer.parseInt(dataArray.get(dataArray.size()-1)));
+            label.add(storeValue);
+        }
+
+        label.sort(new Comparator<StoreValue>() {
+            @Override
+            public int compare(StoreValue o1, StoreValue o2) {
+                return Float.compare(o1.getDistance(),o2.getDistance());
+            }
+        });
+
+        // returning the minimum distance
+        return label.get(0).getLabel();
     }
 
     @Override
