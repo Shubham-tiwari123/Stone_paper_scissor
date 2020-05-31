@@ -53,6 +53,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private LinearLayout layout5;
     private LinearLayout layout6;
 
+    private TextView result1 ;
+    private TextView result2 ;
+    private TextView result3 ;
+    private TextView result4 ;
+    private TextView result5 ;
+    private TextView result6 ;
+
     private Button predictResult;
 
     private static final int IMAGE_PICK_CODE = 1000;
@@ -81,6 +88,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         image4 = findViewById(R.id.image4);
         image5 = findViewById(R.id.image5);
         image6 = findViewById(R.id.image6);
+
+        result1 = findViewById(R.id.result1);
+        result2 = findViewById(R.id.result2);
+        result3 = findViewById(R.id.result3);
+        result4 = findViewById(R.id.result4);
+        result5 = findViewById(R.id.result5);
+        result6 = findViewById(R.id.result6);
 
         spinner = findViewById(R.id.spinner);
         String[] items = new String[]{"Select no of images","1","2","3","4","5","6"};
@@ -362,12 +376,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 layout4.setVisibility(View.GONE);
                 layout5.setVisibility(View.GONE);
                 layout6.setVisibility(View.GONE);
+                result1.setText("Prediction Result");
+                result2.setText("Prediction Result");
+                result3.setText("Prediction Result");
+                result4.setText("Prediction Result");
+                result5.setText("Prediction Result");
+                result6.setText("Prediction Result");
                 totalImagesToDisplay=0;
                 break;
 
             case 1:
                 layout1.setVisibility(View.VISIBLE);
                 image1.setImageResource(R.drawable.ic_image_black_24dp);
+                result1.setText("Prediction Result");
                 layout2.setVisibility(View.GONE);
                 layout3.setVisibility(View.GONE);
                 layout4.setVisibility(View.GONE);
@@ -381,6 +402,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 layout2.setVisibility(View.VISIBLE);
                 image1.setImageResource(R.drawable.ic_image_black_24dp);
                 image2.setImageResource(R.drawable.ic_image_black_24dp);
+                result1.setText("Prediction Result");
+                result2.setText("Prediction Result");
                 layout3.setVisibility(View.GONE);
                 layout4.setVisibility(View.GONE);
                 layout5.setVisibility(View.GONE);
@@ -395,6 +418,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 image1.setImageResource(R.drawable.ic_image_black_24dp);
                 image2.setImageResource(R.drawable.ic_image_black_24dp);
                 image3.setImageResource(R.drawable.ic_image_black_24dp);
+                result1.setText("Prediction Result");
+                result2.setText("Prediction Result");
+                result3.setText("Prediction Result");
                 layout4.setVisibility(View.GONE);
                 layout5.setVisibility(View.GONE);
                 layout6.setVisibility(View.GONE);
@@ -410,6 +436,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 image2.setImageResource(R.drawable.ic_image_black_24dp);
                 image3.setImageResource(R.drawable.ic_image_black_24dp);
                 image4.setImageResource(R.drawable.ic_image_black_24dp);
+                result1.setText("Prediction Result");
+                result2.setText("Prediction Result");
+                result3.setText("Prediction Result");
+                result4.setText("Prediction Result");
                 layout5.setVisibility(View.GONE);
                 layout6.setVisibility(View.GONE);
                 totalImagesToDisplay=4;
@@ -421,6 +451,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 layout3.setVisibility(View.VISIBLE);
                 layout4.setVisibility(View.VISIBLE);
                 layout5.setVisibility(View.VISIBLE);
+                result1.setText("Prediction Result");
+                result2.setText("Prediction Result");
+                result3.setText("Prediction Result");
+                result4.setText("Prediction Result");
+                result5.setText("Prediction Result");
                 image1.setImageResource(R.drawable.ic_image_black_24dp);
                 image2.setImageResource(R.drawable.ic_image_black_24dp);
                 image3.setImageResource(R.drawable.ic_image_black_24dp);
@@ -437,6 +472,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 layout4.setVisibility(View.VISIBLE);
                 layout5.setVisibility(View.VISIBLE);
                 layout6.setVisibility(View.VISIBLE);
+                result1.setText("Prediction Result");
+                result2.setText("Prediction Result");
+                result3.setText("Prediction Result");
+                result4.setText("Prediction Result");
+                result5.setText("Prediction Result");
+                result6.setText("Prediction Result");
                 image1.setImageResource(R.drawable.ic_image_black_24dp);
                 image2.setImageResource(R.drawable.ic_image_black_24dp);
                 image3.setImageResource(R.drawable.ic_image_black_24dp);
